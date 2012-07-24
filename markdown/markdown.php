@@ -2231,7 +2231,15 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 			return $matches[0];
 		$level = $matches[3]{0} == '=' ? 1 : 2;
 		$attr  = $this->_doHeaders_attr($id =& $matches[2]);
-		$block = "<h$level$attr>".$this->runSpanGamut($matches[1])."</h$level>";
+
+		$coreStuff = $this->runSpanGamut($matches[1]);
+		$linkText = str_replace(",","",$matches[1]);
+		$linkText = str_replace(" ","-",$linkText);
+		//$linkText = $matches[1];
+
+		$openingTag = '<h'.$level . $attr .' id="'.$linkText.'" class="headerlink">';
+		$block = $openingTag .  $coreStuff  . "\n" . '<a href="#'.$linkText.'"' . ' class="headerlink"' . '>¶</a></h'.$level.'>';
+
 		return "\n" . $this->hashBlock($block) . "\n\n";
 	}
 	function _doHeaders_callback_atx($matches) {
